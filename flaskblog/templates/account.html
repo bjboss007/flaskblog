@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-section">
+        {% if current_user.username != user.username %}
+            <div class = "media">
+                <img src="{{ user.image_file }}" alt="" class="rounded-circle account-img">
+                <div class="media-body">
+                    <h2 class="account-heading">{{user.username }}</h2>
+                    <p class="text-secondary"> {{user.email}} </p>
+                </div>
+            </div>
+            
+            <span style ="float: left">Post by: <strong class="lead-text">{{user.username}}</strong></span>
+            <span style ="float: right">Number of Post(s): <strong class="lead-text ">{{user.posts | count}}</strong></span>
+           <br>
+    </div>      
+        {% for post in posts.items %}
+        
+            <article class="media content-section">
+                <img src="{{post.author.image_file}}" alt="" class="rounded-circle article-img">
+                <div class="media-body">
+                    <h2><a href="{{url_for('posts.post', post_id = post.id)}}" class="article-title float-left">{{ post.title }}</a></h2>
+                    <small class="text-muted float-right"> {{post.date_posted.strftime('%Y-%m-%d')}}</small>
+                    <br><br>
+                    <p class = "article-content"> {{post.content | safe | truncate(120,true)}} </p>
+                </div>
+            </article>
+        
+        {% endfor %}
+        {% for page_num in posts.iter_pages() %}
+            {% if page_num %}
+                <a href="{{url_for('users.view_profile', username = user.username, page = page_num)}}" class="btn btn-outline-info mb-4"> {{page_num}} </a>
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+        
+    {% if current_user.username == user.username %}
+        <div class = "media">
+            <img src="{{ current_user.image_file }}" alt="" class="rounded-circle account-img">
+            <div class="media-body">
+                <h2 class="account-heading">{{current_user.username }}</h2>
+                <p class="text-secondary"> {{current_user.email}} </p>
+            </div>
+        </div>
+        <!-- <div class="content-section"> -->
+        
+        <form method="POST" action="" role="form" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class = "form-group">
+                <legend class="border-bottom md-4">Account Info</legend>
+                <div class="form-group">
+                    {{form.username.label(class = "form-control-label")}}
+                    {% if form.username.errors %}
+                        {{form.username(class = "form-control is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for e in form.username.errors %}
+                                    <span>{{e}}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{form.username(class = "form-control")}}
+                    {% endif %}
+                    
+                </div>
+
+                <div class="form-group">
+                    {{form.email.label(class = "form-control-label")}}
+                        {% if form.email.errors %}
+                            {{form.email(class = "form-control is-invalid")}}
+                            <div class="invalid-feedback">
+                                {% for e in form.email.errors %}
+                                    <span>{{e}}</span>
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                        {{form.email(class = "form-control ")}}  
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.picture.label()}}
+                    {{form.picture(class = "form-control-file")}}
+                    {% if form.picture.errors %}
+                        
+                        {% for e in form.picture.errors %}
+                            <span class = "text-danger">{{e}}</span> <br>
+                        {% endfor %}
+                        
+                    {% endif %}
+                    </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{form.submit(class = "btn btn-outline-info ")}}
+            </div>
+        </form>
+    </div>
+    {% endif %}   
+        
+{% endblock %}

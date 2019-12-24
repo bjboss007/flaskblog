@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/muhammad/.Envs/flask/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
